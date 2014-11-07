@@ -1,0 +1,30 @@
+DEFINITION MODULE Sorter;
+
+        (********************************************************)
+        (*                                                      *)
+        (*     In-memory sort of an array of GEDCOM records     *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            13 July 2001                    *)
+        (*  Last edited:        15 July 2001                    *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM Records IMPORT
+    (* type *)  RecordTree;
+
+
+PROCEDURE SortArray (VAR (*INOUT*) A: ARRAY OF RecordTree;  amount: CARDINAL);
+
+    (* Sorts an array of 'amount' records. *)
+
+PROCEDURE Compare (TA, TB: RecordTree): INTEGER;
+
+    (* Returns <0 if TA<TB, =0 if TA=TB, >0 if TA>TB.                           *)
+    (* Convention: a non-NIL argument will always be taken to be smaller than   *)
+    (* a NIL argument.                                                          *)
+
+END Sorter.
+

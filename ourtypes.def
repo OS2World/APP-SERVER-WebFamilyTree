@@ -1,0 +1,35 @@
+DEFINITION MODULE OurTypes;
+
+        (********************************************************)
+        (*                                                      *)
+        (*      Web Family Tree: miscellaneous data types       *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            9 July 2001                     *)
+        (*  Last edited:        16 July 2001                    *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM SYSTEM IMPORT LOC;
+
+TYPE
+    (* String that identifies an individual or family record. *)
+
+    IDString = ARRAY [0..22] OF CHAR;
+
+    (* Miscellaneous string data. *)
+
+    DataString = ARRAY [0..511] OF CHAR;
+
+    (* String for use as a file name. *)
+
+    FilenameString = DataString;
+
+    (* One line from a GEDCOM file. *)
+
+    Line = DataString;
+
+END OurTypes.
+

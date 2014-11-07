@@ -1,0 +1,69 @@
+DEFINITION MODULE Indexes;
+
+        (********************************************************)
+        (*                                                      *)
+        (*      Web Family Tree: module to deal with the        *)
+        (*                    index file                        *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            9 July 2001                     *)
+        (*  Last edited:        18 July 2001                    *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM OurTypes IMPORT
+    (* type *)  IDString, FilenameString, Line;
+
+FROM TextBuffers IMPORT
+    (* type *)  Buffer;
+
+(************************************************************************)
+
+TYPE
+    Index;      (* is private *)
+
+(************************************************************************)
+
+
+PROCEDURE GetOneLine (TB: Buffer;  VAR (*OUT*) result: Line): CARDINAL;
+
+    (* Reads one line, trims its level from the front and returns the   *)
+    (* level as the function result.                                    *)
+
+PROCEDURE GetFirstLine (TB: Buffer;  VAR (*OUT*) Lookahead: Line);
+
+    (* Goes to the beginning of the file, loads Lookahead in            *)
+    (* preparation for the first call to GetNextLine.                   *)
+
+PROCEDURE GetNextLine (TB: Buffer;  VAR (*OUT*) result: Line;
+                               VAR (*INOUT*) Lookahead: Line): CARDINAL;
+
+    (* Copies Lookahead to result, and then loads the following line    *)
+    (* into Lookahead.                                                  *)
+
+PROCEDURE OpenIndex (DataFile: Buffer;  DatabaseName: FilenameString): Index;
+
+    (* Opens an index file. *)
+
+PROCEDURE CloseIndex (VAR (*INOUT*) IX: Index);
+
+    (* Closes an index file. *)
+
+PROCEDURE DeleteIndexFile (IX: Index);
+
+    (* Deletes the index file if it exists.  *)
+
+PROCEDURE PositionToRecord (IX: Index;  ID: IDString): BOOLEAN;
+
+    (* Positions the database file to the start of the level 0 record   *)
+    (* for the given ID.                                                *)
+
+PROCEDURE Match (string1, string2: ARRAY OF CHAR): BOOLEAN;
+
+    (* Returns TRUE iff string1 and string2 are equal, modulo character *)
+    (* case.                                                            *)
+
+END Indexes.
+

@@ -1,0 +1,50 @@
+DEFINITION MODULE Sets;
+
+        (********************************************************)
+        (*                                                      *)
+        (*      Implementation of SET OF CARDINAL[0..max]       *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            04 December 2001                *)
+        (*  Last edited:        26 June 2002                    *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+TYPE Set;       (* is private *)
+
+(************************************************************************)
+
+PROCEDURE CreateSet (max: CARDINAL): Set;
+
+    (* Creates a set of [0..max], initially empty. *)
+
+PROCEDURE DiscardSet (VAR (*INOUT*) S: Set);
+
+    (* Destroys a set. *)
+
+PROCEDURE IsEmpty (S: Set): BOOLEAN;
+
+    (* Returns TRUE iff this is an empty set. *)
+
+PROCEDURE Include (val: CARDINAL;  VAR (*INOUT*) S: Set);
+
+    (* Adds val to S. *)
+
+PROCEDURE Exclude (val: CARDINAL;  VAR (*INOUT*) S: Set);
+
+    (* Removes val from S. *)
+
+PROCEDURE IsMember (val: CARDINAL;  S: Set): BOOLEAN;
+
+    (* Returns TRUE iff val is in set S. *)
+
+PROCEDURE TakeFrom (VAR (*OUT*) val: CARDINAL;
+                    VAR (*INOUT*) S: Set): BOOLEAN;
+
+    (* Removes one element from the set, and returns it as val. *)
+    (* Returns FALSE if the set was empty.                      *)
+
+END Sets.
+

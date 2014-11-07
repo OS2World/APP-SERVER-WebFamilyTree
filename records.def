@@ -1,0 +1,85 @@
+DEFINITION MODULE Records;
+
+        (********************************************************)
+        (*                                                      *)
+        (*         Input and output of GEDCOM records           *)
+        (*                                                      *)
+        (*    This module not used by WFT, only by GEDSort      *)
+        (*                 and Lint and Subset                  *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            13 July 2001                    *)
+        (*  Last edited:        25 December 2004                *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM FileOps IMPORT ChanId;
+FROM TextBuffers IMPORT Buffer;
+FROM OurTypes IMPORT IDString, DataString, Line;
+
+TYPE
+    RecordTree;       (* is private *)
+
+(************************************************************************)
+
+PROCEDURE StartReading (TB: Buffer;  VAR (*OUT*) NextLevel: CARDINAL;
+                                          VAR (*OUT*) Lookahead: Line);
+
+    (* Initialisation needed before the first call to LoadNextRecord.   *)
+
+PROCEDURE LoadNextRecord (TB: Buffer;  VAR (*OUT*) RecTree: RecordTree;
+                                        VAR (*INOUT*) NextLevel: CARDINAL;
+                                        VAR (*INOUT*) Lookahead: Line;
+                                        VAR (*OUT*) finished: BOOLEAN);
+
+    (* Loads the next level 0 record in the database into RecTree.      *)
+    (* Assumption: NextLevel and Lookahead have been "seeded" by a      *)
+    (* previous call to LoadNextRecord or StartReading.                 *)
+    (* Returns with finished = TRUE if there is no record.              *)
+
+PROCEDURE KwdMatch (RecTree: RecordTree;  keyword: ARRAY OF CHAR): BOOLEAN;
+
+    (* Returns TRUE iff keyword occurs in RecTree at the top level. *)
+
+PROCEDURE IsPeopleRecord (RecTree: RecordTree;
+                          VAR (*OUT*) ID: IDString;
+                          VAR (*OUT*) family: BOOLEAN): BOOLEAN;
+
+    (* Returns TRUE iff the top-level keyword in RecTree is INDI or     *)
+    (* FAM.  If so, sets ID to the ID of this record and sets           *)
+    (* family=TRUE for a FAM record and family=FALSE for INDI.          *)
+
+PROCEDURE GetField (keyword: ARRAY OF CHAR;  VAR (*INOUT*) T: RecordTree;
+                                  VAR (*OUT*) data: DataString): BOOLEAN;
+
+    (* Like ExtractSubrecord, but discards the sublist. *)
+
+PROCEDURE GetName (T: RecordTree;
+                    VAR (*OUT*) surname, wholename: Line): BOOLEAN;
+
+    (* Returns both the surname and the whole name.  The function       *)
+    (* result is FALSE for an empty tree.  It is TRUE if the record     *)
+    (* exists, even if the name field is missing or blank.              *)
+
+PROCEDURE WriteRecord (cid: ChanId;  RecTree: RecordTree);
+
+    (* Writes a record to the output file. *)
+
+PROCEDURE DiscardTopLevel (VAR (*INOUT*) RecTree: RecordTree);
+
+    (* Removes the top level of information. *)
+
+PROCEDURE DiscardTree (VAR (*INOUT*) RecTree: RecordTree);
+
+    (* Releases the storage taken by the tree. *)
+
+PROCEDURE PruneINDIRecord (R: RecordTree);
+
+    (* We assume that the caller has already verified that R is an INDI *)
+    (* record.  This procedure looks for and eliminates certain         *)
+    (* redundant subrecords.                                            *)
+
+END Records.
+

@@ -1,0 +1,177 @@
+DEFINITION MODULE GELookup;
+
+        (********************************************************)
+        (*                                                      *)
+        (*      Web Family Tree: module to find records in      *)
+        (*                  a GEDCOM file                       *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            7 July 2001                     *)
+        (*  Last edited:        24 January 2005                 *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM FileOps IMPORT
+    (* type *)  ChanId, FilePos;
+
+FROM OurTypes IMPORT
+    (* type *)  IDString, DataString, FilenameString, Line;
+
+FROM Languages IMPORT
+    (* type *)  LangHandle;
+
+(************************************************************************)
+
+TYPE
+    Database;      (* is private *)
+    RecordTree;    (* is private *)
+
+(************************************************************************)
+
+PROCEDURE OpenDatabase (VAR (*OUT*) DB: Database;
+                            DatabaseName: FilenameString): BOOLEAN;
+
+    (* Opens a GEDCOM file. *)
+
+PROCEDURE CloseDatabase (VAR (*INOUT*) DB: Database);
+
+    (* Closes a GEDCOM file. *)
+
+PROCEDURE CharSetOf (DB: Database;  VAR (*OUT*) CharSetName: DataString);
+
+    (* Returns the character encoding for this database. *)
+
+PROCEDURE WriteDatabaseName (DB: Database);
+
+    (* Writes the name of this database. *)
+
+PROCEDURE SeekToMatchingID (DB: Database;  ID: IDString);
+
+    (* Assumption: the file is already open.  We position the file to   *)
+    (* the start of the line just after the level 0 line that           *)
+    (* matches the ID.                                                  *)
+
+    (* Special case: If ID is the null string then we match the         *)
+    (* first INDI record in the file.                                   *)
+
+PROCEDURE SavePosition (DB: Database): FilePos;
+
+    (* Returns the current position in the file. *)
+
+PROCEDURE RestorePosition (DB: Database;  pos: FilePos);
+
+    (* Repositions the data file to the given position. *)
+
+PROCEDURE NonEmpty (T: RecordTree): BOOLEAN;
+
+    (* Returns TRUE iff T is not NIL. *)
+
+PROCEDURE LoadRecord0 (DB: Database;  ID: IDString): RecordTree;
+
+    (* We find the level 0 record with the given ID, and then load the  *)
+    (* level 0 and greater lines into the result tree.  The ID is       *)
+    (* stripped from the top-level record.                              *)
+
+PROCEDURE LoadRecord (DB: Database;  VAR (*OUT*) RecTree: RecordTree);
+
+    (* Assumption: the file is already positioned at the start of the   *)
+    (* first level 1 line.  We load the level 1 and greater lines into  *)
+    (* RecTree, stripping off the level numbers.                        *)
+
+PROCEDURE StartReading (DB: Database;  VAR (*OUT*) NextLevel: CARDINAL;
+                                          VAR (*OUT*) Lookahead: Line);
+
+    (* Initialisation needed before the first call to LoadNextRecord.   *)
+
+PROCEDURE LoadNextINDIRecord (DB: Database;  VAR (*OUT*) ID: IDString;
+                                  VAR (*OUT*) RecTree: RecordTree;
+                                  VAR (*INOUT*) NextLevel: CARDINAL;
+                                  VAR (*INOUT*) Lookahead: Line): BOOLEAN;
+
+    (* Loads the next record for an individual into RecTree.  Non-INDI  *)
+    (* records are skipped.  On successful return RecTree holds the     *)
+    (* level 1 and higher lines of the record.  If there is no next     *)
+    (* INDI record, we return FALSE and RecTree = NIL.                  *)
+    (* Assumption: NextLevel and Lookahead have been "seeded" by a      *)
+    (* previous call to LoadNextRecord or StartReading.                 *)
+
+PROCEDURE CopyTree (RecTree: RecordTree): RecordTree;
+
+    (* Creates a duplicate of the tree. *)
+
+PROCEDURE DiscardTree (VAR (*INOUT*) RecTree: RecordTree);
+
+    (* Releases the storage taken by the tree. *)
+
+PROCEDURE ExtractSubrecord (keyword: ARRAY OF CHAR;
+                            VAR (*INOUT*) T: RecordTree;
+                            VAR (*OUT*) data: Line;
+                            VAR (*OUT*) subtree: RecordTree): BOOLEAN;
+
+    (* Finds the top-level record, if any, in T that starts with        *)
+    (* keyword.  If not found, data is the empty string, subtree=NIL,   *)
+    (* T is left unchanged, and the function result is FALSE.           *)
+    (* If found, the record and its subsidiary records are removed      *)
+    (* from T and the function result is TRUE.  The returned value of   *)
+    (* 'data' is the top-level line with keyword and leading spaces     *)
+    (* stripped.  The returned value of subtree gives the lower-level   *)
+    (* records that were also extracted.                                *)
+
+PROCEDURE ExtractEither (kwd1, kwd2: ARRAY OF CHAR;
+                            VAR (*INOUT*) T: RecordTree;
+                            VAR (*OUT*) data: Line;
+                            VAR (*OUT*) subtree: RecordTree;
+                            VAR (*OUT*) which: CARDINAL): BOOLEAN;
+
+    (* Like ExtractSubrecord, but finds the first keyword from two      *)
+    (* possible candidates.  The output parameter is returned as 0 if   *)
+    (* neither is found; as 1 if kwd1 is found; and as 2 if kwd2 is     *)
+    (* found.                                                           *)
+
+PROCEDURE GetField (keyword: ARRAY OF CHAR;  VAR (*INOUT*) T: RecordTree;
+                                  VAR (*OUT*) data: DataString): BOOLEAN;
+
+    (* Like ExtractSubrecord, but discards the sublist. *)
+
+PROCEDURE CopyField (keyword: ARRAY OF CHAR;  T: RecordTree;
+                                  VAR (*OUT*) data: DataString): BOOLEAN;
+
+    (* Like GetField, but the original tree T is left unchanged. *)
+
+PROCEDURE GetName (VAR (*INOUT*) T: RecordTree;
+                             VAR (*OUT*) name: DataString): BOOLEAN;
+
+    (* Removes the NAME record from T, returns the name. *)
+
+PROCEDURE CopyName (T: RecordTree;  VAR (*OUT*) name: DataString): BOOLEAN;
+
+    (* Like GetName, but leaves T unaltered. *)
+
+PROCEDURE GetDateRange (T: RecordTree;  VAR (*OUT*) range: DataString);
+
+    (* Sets range to a string 'birth year' - 'death year'.  The *)
+    (* original tree is not altered.                            *)
+
+PROCEDURE DisplayRawLines (RecTree: RecordTree);
+
+    (* Displays the contents of the tree. *)
+
+PROCEDURE WritePersonLink (lang: LangHandle;  DB: Database;
+                                 PersonID: IDString);
+
+    (* Turns PersonID into an HTML reference, and writes it to  *)
+    (* standard output.                                         *)
+
+PROCEDURE WritePersonLink2 (lang: LangHandle;  DB: Database;
+                               PersonID: IDString;  AddDate: BOOLEAN;
+                                    VAR (*INOUT*) PersonData: RecordTree);
+
+    (* Like WritePersonLink, but for the case where the caller  *)
+    (* has already loaded the information for this person into  *)
+    (* PersonData.  We also have the option of displaying a     *)
+    (* year range (birth-death).                                *)
+
+END GELookup.
+

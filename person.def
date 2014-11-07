@@ -1,0 +1,63 @@
+DEFINITION MODULE Person;
+
+        (********************************************************)
+        (*                                                      *)
+        (*      Web Family Tree: module to look up and          *)
+        (*           display the data for a person              *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            6 July 2001                     *)
+        (*  Last edited:        24 January 2005                 *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM Languages IMPORT
+    (* type *)  LangHandle;
+
+FROM OurTypes IMPORT
+    (* type *)  IDString, DataString, FilenameString;
+
+TYPE
+    PersonData;        (* is private *)
+
+
+PROCEDURE GetPersonData (DatabaseName: FilenameString;  PersonID: IDString;
+                                       VAR (*OUT*) result: PersonData): BOOLEAN;
+
+    (* Looks up the database for person with identifier PersonID, fills the     *)
+    (* result record with the information.                                      *)
+
+PROCEDURE OurCharSet (data: PersonData;
+                      VAR (*OUT*) CharSetName: DataString);
+
+    (* Returns the character encoding used by this database.  *)
+
+PROCEDURE DiscardPersonData (VAR (*INOUT*) data: PersonData);
+
+    (* Disposes of the PersonData information. *)
+
+PROCEDURE DisplayPerson (lang: LangHandle;  data: PersonData);
+
+    (* Displays the information in the PersonData record. *)
+
+PROCEDURE DisplayDescendants (lang: LangHandle;  data: PersonData;
+                                                 ShowDetails: BOOLEAN);
+
+    (* Displays the names of this person and all direct descendants. *)
+
+PROCEDURE DisplayAncestors (lang: LangHandle;  data: PersonData;
+                                               ShowDetails: BOOLEAN);
+
+    (* Displays the names of this person and all direct ancestors. *)
+
+PROCEDURE DisplayEveryone (lang: LangHandle;  dummy: PersonData;
+                                              ShowDetails: BOOLEAN);
+
+    (* Displays the names of everyone in the database.  The person      *)
+    (* mentioned in the argument is unimportant, but we need some       *)
+    (* person record so that we can identify the database.              *)
+
+END Person.
+
