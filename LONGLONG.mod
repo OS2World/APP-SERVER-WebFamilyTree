@@ -1,3 +1,25 @@
+(**************************************************************************)
+(*                                                                        *)
+(*  PMOS/2 software library                                               *)
+(*  Copyright (C) 2014   Peter Moylan                                     *)
+(*                                                                        *)
+(*  This program is free software: you can redistribute it and/or modify  *)
+(*  it under the terms of the GNU General Public License as published by  *)
+(*  the Free Software Foundation, either version 3 of the License, or     *)
+(*  (at your option) any later version.                                   *)
+(*                                                                        *)
+(*  This program is distributed in the hope that it will be useful,       *)
+(*  but WITHOUT ANY WARRANTY; without even the implied warranty of        *)
+(*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *)
+(*  GNU General Public License for more details.                          *)
+(*                                                                        *)
+(*  You should have received a copy of the GNU General Public License     *)
+(*  along with this program.  If not, see <http://www.gnu.org/licenses/>. *)
+(*                                                                        *)
+(*  To contact author:   http://www.pmoylan.org   peter@pmoylan.org       *)
+(*                                                                        *)
+(**************************************************************************)
+
 IMPLEMENTATION MODULE LONGLONG;
 
         (********************************************************)
@@ -6,7 +28,7 @@ IMPLEMENTATION MODULE LONGLONG;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            17 October 2001                 *)
-        (*  Last edited:        11 September 2004               *)
+        (*  Last edited:        1 June 2011                     *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (********************************************************)
@@ -51,6 +73,22 @@ PROCEDURE Add64 (VAR (*INOUT*) A: CARD64;  B: CARDINAL);
             A.low := A.low + B;
         END (*IF*);
     END Add64;
+
+(************************************************************************)
+
+PROCEDURE Sub64 (VAR (*INOUT*) A: CARD64;  B: CARDINAL);
+
+    (* Computes  A := A - B.  This differs from Diff64 (below) in the   *)
+    (* type of B, and in the way the result is returned.                *)
+
+    BEGIN
+        IF A.low < B THEN
+            A.low := A.low + (MAX(CARDINAL) - B + 1);
+            DEC (A.high);
+        ELSE
+            A.low := A.low - B;
+        END (*IF*);
+    END Sub64;
 
 (************************************************************************)
 
@@ -138,7 +176,7 @@ PROCEDURE Mul64 (A, B: CARD64): CARD64;
 
     (* Returns A*B. *)
 
-    CONST scale = 32768;
+    CONST scale = 65536;
 
     (********************************************************************)
 
@@ -207,6 +245,24 @@ PROCEDURE Mul64 (A, B: CARD64): CARD64;
         RETURN result;
 
     END Mul64;
+
+(************************************************************************)
+
+PROCEDURE ShortMul64 (A: CARD64;  B: CARDINAL): CARD64;
+
+    (* Returns A*B, for the case where the second operand is a CARDINAL. *)
+
+    VAR BB: CARD64;
+
+    BEGIN
+        (* It's probably good enough to do this without *)
+        (* trying to optimise.                          *)
+
+        BB.low := B;
+        BB.high := 0;
+        RETURN Mul64 (A, BB);
+
+    END ShortMul64;
 
 (************************************************************************)
 
@@ -339,6 +395,18 @@ PROCEDURE FLOAT64 (number: CARD64): REAL;
     BEGIN
         RETURN scale*FLOAT(number.high) + FLOAT(number.low);
     END FLOAT64;
+
+(************************************************************************)
+
+PROCEDURE ORDL (number: INT64): CARDINAL;
+
+    (* Converts INT64 to CARDINAL. *)
+
+    BEGIN
+        IF number.high <> 0 THEN RETURN MAX(CARDINAL)
+        ELSE RETURN number.low;
+        END (*IF*)
+    END ORDL;
 
 (************************************************************************)
 

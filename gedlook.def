@@ -1,13 +1,13 @@
-DEFINITION MODULE GELookup;
+DEFINITION MODULE GEDLook;
 
         (********************************************************)
         (*                                                      *)
-        (*      Web Family Tree: module to find records in      *)
-        (*                  a GEDCOM file                       *)
+        (*       Modified version of module GELookup for        *)
+        (*                 use in Ged2HTML                      *)
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
-        (*  Started:            7 July 2001                     *)
-        (*  Last edited:        3 January 2011                  *)
+        (*  Started:            30 August 2005                  *)
+        (*  Last edited:        30 June 2009                    *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -23,13 +23,6 @@ FROM Languages IMPORT
     (* type *)  LangHandle;
 
 (************************************************************************)
-
-CONST progname =
-        <* IF UseWindows THEN *>
-            "wft.exe";
-        <* ELSE *>
-            "wft.cmd";
-        <* END *>
 
 TYPE
     Database;      (* is private *)
@@ -49,10 +42,6 @@ PROCEDURE CloseDatabase (VAR (*INOUT*) DB: Database);
 PROCEDURE CharSetOf (DB: Database;  VAR (*OUT*) CharSetName: DataString);
 
     (* Returns the character encoding for this database. *)
-
-PROCEDURE WriteDatabaseName (DB: Database);
-
-    (* Writes the name of this database. *)
 
 PROCEDURE SeekToMatchingID (DB: Database;  ID: IDString);
 
@@ -74,12 +63,6 @@ PROCEDURE RestorePosition (DB: Database;  pos: FilePos);
 PROCEDURE NonEmpty (T: RecordTree): BOOLEAN;
 
     (* Returns TRUE iff T is not NIL. *)
-
-PROCEDURE RemoveUnwantedRecords (VAR (*INOUT*) T: RecordTree);
-
-    (* Strips out all records, at the current level, that WFT doesn't   *)
-    (* want to know about.  When a record is discarded then of course   *)
-    (* its subrecords are already discarded.                            *)
 
 PROCEDURE LoadRecord0 (DB: Database;  ID: IDString): RecordTree;
 
@@ -110,13 +93,16 @@ PROCEDURE LoadNextINDIRecord (DB: Database;  VAR (*OUT*) ID: IDString;
     (* Assumption: NextLevel and Lookahead have been "seeded" by a      *)
     (* previous call to LoadNextRecord or StartReading.                 *)
 
-PROCEDURE CopyTree (RecTree: RecordTree): RecordTree;
-
-    (* Creates a duplicate of the tree. *)
-
 PROCEDURE DiscardTree (VAR (*INOUT*) RecTree: RecordTree);
 
     (* Releases the storage taken by the tree. *)
+
+PROCEDURE HeadMatch (VAR (*INOUT*) string: ARRAY OF CHAR;
+                              template: ARRAY OF CHAR): BOOLEAN;
+
+    (* Returns TRUE iff a leading substring of string matches template, *)
+    (* modulo character case.  If there is a match, the matched         *)
+    (* substring and any following spaces are removed from string.      *)
 
 PROCEDURE ExtractSubrecord (keyword: ARRAY OF CHAR;
                             VAR (*INOUT*) T: RecordTree;
@@ -143,13 +129,6 @@ PROCEDURE ExtractEither (kwd1, kwd2: ARRAY OF CHAR;
     (* neither is found; as 1 if kwd1 is found; and as 2 if kwd2 is     *)
     (* found.                                                           *)
 
-PROCEDURE HeadMatch (VAR (*INOUT*) string: ARRAY OF CHAR;
-                              template: ARRAY OF CHAR): BOOLEAN;
-
-    (* Returns TRUE iff a leading substring of string matches template, *)
-    (* modulo character case.  If there is a match, the matched         *)
-    (* substring and any following spaces are removed from string.      *)
-
 PROCEDURE GetField (keyword: ARRAY OF CHAR;  VAR (*INOUT*) T: RecordTree;
                                   VAR (*OUT*) data: DataString): BOOLEAN;
 
@@ -159,15 +138,6 @@ PROCEDURE CopyField (keyword: ARRAY OF CHAR;  T: RecordTree;
                                   VAR (*OUT*) data: DataString): BOOLEAN;
 
     (* Like GetField, but the original tree T is left unchanged. *)
-
-PROCEDURE GetContinuation (VAR (*INOUT*) T: RecordTree;
-                           VAR (*OUT*) data: Line;
-                           VAR (*OUT*) IsCONT: BOOLEAN): BOOLEAN;
-
-    (* Like GetField, but looks only at the first record in T, and      *)
-    (* reports success only if that first record is a CONC or CONT      *)
-    (* record.  The IsCONT parameter is returned as TRUE if it was      *)
-    (* a CONT record we found.                                          *)
 
 PROCEDURE GetName (VAR (*INOUT*) T: RecordTree;
                              VAR (*OUT*) name: DataString): BOOLEAN;
@@ -183,32 +153,15 @@ PROCEDURE GetDateRange (T: RecordTree;  VAR (*OUT*) range: DataString);
     (* Sets range to a string 'birth year' - 'death year'.  The *)
     (* original tree is not altered.                            *)
 
-PROCEDURE DisplayRawLines (RecTree: RecordTree);
+PROCEDURE DisplayRawLines (cid: ChanId;  RecTree: RecordTree);
 
-    (* Displays the contents of the tree. *)
+    (* Writes the contents of the tree. *)
 
-PROCEDURE WritePersonLink (lang: LangHandle;  DB: Database;
-                                 PersonID: IDString);
+PROCEDURE WritePersonLink (cid: ChanId;  lang: LangHandle;  DB: Database;
+                                 PersonID: IDString; external: BOOLEAN);
 
     (* Turns PersonID into an HTML reference, and writes it to  *)
-    (* standard output.                                         *)
+    (* the output file.                                         *)
 
-PROCEDURE WritePersonLinkClipped (lang: LangHandle;  DB: Database;
-                                   PersonID: IDString;
-                                   VAR (*INOUT*) width: CARDINAL);
-
-    (* Like WritePersonLink, but does not write more than width *)
-    (* characters, and decrements width by the number of        *)
-    (* characters written.                                      *)
-
-PROCEDURE WritePersonLink2 (lang: LangHandle;  DB: Database;
-                               PersonID: IDString;  AddDate: BOOLEAN;
-                                    VAR (*INOUT*) PersonData: RecordTree;
-                                    VAR (*INOUT*) width: CARDINAL);
-
-    (* Like WritePersonLinkClipped, but for the case where the caller  *)
-    (* has already loaded the information for this person into         *)
-    (* PersonData.                                                     *)
-
-END GELookup.
+END GEDLook.
 

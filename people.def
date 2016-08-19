@@ -1,0 +1,52 @@
+DEFINITION MODULE People;
+
+        (********************************************************)
+        (*                                                      *)
+        (*      Stripped-down version of module Person for      *)
+        (*                 use in Ged2HTML                      *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            29 August 2005                  *)
+        (*  Last edited:        31 August 2005                  *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+FROM Languages IMPORT
+    (* type *)  LangHandle;
+
+FROM OurTypes IMPORT
+    (* type *)  DataString, FilenameString;
+
+FROM FileOps IMPORT
+    (* type *)  ChanId;
+
+
+TYPE
+    PersonData;        (* is private *)
+
+
+PROCEDURE GetInitialData (DatabaseName: FilenameString;
+                          VAR (*OUT*) result: PersonData);
+
+    (* Opens the database, returns a result that can subsequently be    *)
+    (* used for accessing that database.                                *)
+
+PROCEDURE OurCharSet (data: PersonData;
+                      VAR (*OUT*) CharSetName: DataString);
+
+    (* Returns the character encoding used by this database.  *)
+
+PROCEDURE DiscardPersonData (VAR (*INOUT*) data: PersonData);
+
+    (* Disposes of the PersonData information. *)
+
+PROCEDURE DisplayEveryone (cid: ChanId;  lang: LangHandle;  dummy: PersonData);
+
+    (* Displays the names of everyone in the database.  The person      *)
+    (* mentioned in the argument is unimportant, but we need some       *)
+    (* person record so that we can identify the database.              *)
+
+END People.
+

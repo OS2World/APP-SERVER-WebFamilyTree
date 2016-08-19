@@ -7,7 +7,7 @@ IMPLEMENTATION MODULE Indexes;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            9 July 2001                     *)
-        (*  Last edited:        12 September 2004               *)
+        (*  Last edited:        20 November 2010                *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -283,15 +283,15 @@ PROCEDURE RebuildIndexFile (IX: Index);
 
     (* Creates an index file, after deleting the old one if it exists.  *)
 
-    VAR SrcPos: FilePos;
+    VAR SrcPos: FilePos;  R: IndexRecord;
         thisline: Line;  level, pos: CARDINAL;
-        tag: IDString;  found: BOOLEAN;
+        found: BOOLEAN;
         cid: ChanId;
 
     BEGIN
         DeleteIndexFile (IX);
         IX^.MaxRecordNo := 0;
-        cid := OpenNewFile (IX^.file);
+        cid := OpenNewFile (IX^.file, TRUE);
         IF cid <> NoSuchChannel THEN
             TBSetPosition (IX^.dataTB, TBStartPosition(IX^.dataTB));
             LOOP
@@ -302,9 +302,9 @@ PROCEDURE RebuildIndexFile (IX: Index);
                     IF thisline[0] = '@' THEN
                         Strings.FindNext ('@', thisline, 1, found, pos);
                         IF found THEN
-                            Strings.Extract (thisline, 1, pos-1, tag);
-                            WriteRaw (cid, SrcPos, SIZE(SrcPos));
-                            WriteRaw (cid, tag, SIZE(tag));
+                            R.pos := SrcPos;
+                            Strings.Extract (thisline, 1, pos-1, R.tag);
+                            WriteRaw (cid, R, SIZE(IndexRecord));
                             INC (IX^.MaxRecordNo);
                         END (*IF*);
                     END (*IF*);
@@ -316,7 +316,7 @@ PROCEDURE RebuildIndexFile (IX: Index);
             END (*IF*);
             CloseFile (cid);
         END (*IF*);
-        IX^.TB := OpenForReading (IX^.file);
+        IX^.TB := OpenForReading (IX^.file, FALSE);
     END RebuildIndexFile;
 
 (************************************************************************)
@@ -330,10 +330,9 @@ PROCEDURE OpenIndex (DataFile: Buffer;  DatabaseName: FilenameString): Index;
     BEGIN
         NEW (IX);
         IX^.dataTB := DataFile;
-        Strings.Assign ("data\", IX^.file);
-        Strings.Append (DatabaseName, IX^.file);
+        Strings.Assign (DatabaseName, IX^.file);
         Strings.Append (".IDX", IX^.file);
-        IX^.TB := OpenForReading (IX^.file);
+        IX^.TB := OpenForReading (IX^.file, FALSE);
         IF TBFileOpened (IX^.TB) THEN
             IX^.MaxRecordNo := ShortDiv (TBEndPosition(IX^.TB), SIZE(IndexRecord));
             IF IX^.MaxRecordNo > 0 THEN

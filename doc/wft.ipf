@@ -28,23 +28,23 @@ section for other privacy-related issues.
 The easiest way to see whether WFT suits your needs is to take a look at my own
 family tree. Go to
 :xmp.
-     http&colon.&slash.&slash.eepjm.newcastle.edu.au/os2/wft.html
+     http&colon.&slash.&slash.www.pmoylan.org/pages/os2/wft.html
 :exmp.
 and follow the 'Try it out' link.
 
 :p.
 This software is :hp2.freeware:ehp2.. You don't have to pay me for it, and you
 can even obtain a copy of the source code by going to
-http&colon.&slash.&slash.eepjm.newcastle.edu.au. The only restriction I am
+http&colon.&slash.&slash.www.pmoylan.org. The only restriction I am
 placing on its distribution and use is that you do not engage in
 plagiarism. If you re-use my code in a commercial application, you
-must first ask my permission, and negotiate a suitable licencing agreement.
+must first ask my permission, and negotiate a suitable licensing agreement.
 If you re-use my code in a freeware
 application you do not need my permission, but you must include a
 reference to the original source, and you must tell me that you
 are using it.
 
-:p.This documentation is for version 1.2.
+:p.This documentation is for version 1.9.
 
 :p.
 :hp2.Disclaimer of Warranty:ehp2.
@@ -63,34 +63,21 @@ with you.
 :esl.
 
 :p.
-The author of WFT is Peter Moylan, peter@ee.newcastle.edu.au.
+The author of WFT is Peter Moylan, peter@pmoylan.org.
 
 :p.
-The latest version of WFT is normally kept at ftp&colon.&slash.&slash.eepjm.newcastle.edu.au/software.
+The latest version of WFT is normally kept at http&colon.&slash.&slash.www.pmoylan.org/ftp/software.
 Information about other software on this site may be found at
-http&colon.&slash.&slash.eepjm.newcastle.edu.au/os2.
+http&colon.&slash.&slash.www.pmoylan.org/pages/os2/.
 
 :p.
 :hp2.Getting information about new versions:ehp2.
 
 :p.
-You can, if you wish, join a mailing list for announcements about
-new releases of my software. The mailing list called
-software-announce@eepjm.newcastle.edu.au is used purely for such
-announcements. (It has very little traffic - merely a message each
-time I release a new version of one of my programs.) To join
-this list, send an
-e-mail to majormajor@eepjm.newcastle.edu.au. The subject line is not
-important and may be anything. In the body of the message, put the
-lines
-:xmp.
-
-       subscribe software-announce
-       end
-:exmp.
-
-:p.To have yourself removed from the list, send a similar e-mail but
-using the command "unsubscribe" instead of "subscribe".
+New releases of my software are normally announced on the VOICE News
+mailing list. (This is one of the best sources of information about new
+releases of OS/2 and eCS software.) To join this mailing list, go to
+http&colon.&slash.&slash.www.os2voice.org/ and look for "VOICE news".
 
 .***********************************
 .*   PREREQUISITES
@@ -103,23 +90,32 @@ using the command "unsubscribe" instead of "subscribe".
 :p.
 In order to run this software, you must have
 :ul.
-:li.an OS/2 or eCS operating system.
-:li.a web server running on your machine.
+:li.An OS/2 or eCS operating system. (A Windows version exists, but
+is not packaged ready for distribution - e-mail me if you want the
+executable. I might make a Linux version if there's enough demand,
+but haven't yet done so.)
+:li.A web server running on your machine (but see below).
 :eul.
 
 :p.You probably satisfy the first requirement (otherwise, why
 download this package?), but you might not yet have a web
 server running on your machine.
 
-:p.For the web server, I personally recommend the one that you
-will find at http&colon.&slash.&slash.dink.org, but that is just
-one of many possibilities. (I have no connection with dink.org,
-other than being a satisfied user.) Some other popular web
+:p.For the web server, I personally recommend WebServe, available from
+http&colon.&slash.&slash.pmoylan.org/pages/os2/webserve.html,
+but that is just one of many possibilities. (WebServe is my own product,
+but I don't insist that you use it.) Some other popular web
 servers are mentioned in the section on
 :link reftype=hd refid=webserver.Installing a web server:elink..
-WFT is almost certainly
-compatible with any of the web servers available for the
+WFT is almost certainly compatible with any of the web servers available for the
 OS/2 and eCS platforms.
+
+:p.If you don't have the option of running your own web server,
+there is still one possibility. The
+:link reftype=hd refid=ged2html.Ged2HTML:elink. program, which
+is supplied with WFT, produces complete web pages which can
+be uploaded to your ISP's web space. This is not an ideal
+solution, but it is better than nothing.
 
 .***********************************
 .*   INSTALLATION
@@ -180,6 +176,10 @@ version; or
 the directory into which the new version should be installed.
 :eul.
 
+:p.If you are upgrading from a version earlier than 1.3, it is best
+to use INSTALL.CMD, because the script to be placed in your cgi-bin
+directory has changed.
+
 .***********************************
 .*   INSTALLING A WEB SERVER
 .***********************************
@@ -201,11 +201,13 @@ and its name is usually "localhost". If the loopback interface
 is not already working for you (try the command "ping 127.0.0.1"),
 you should open the TCP/IP configuration notebook and enable it.
 
-:p.There is a good choice of web servers in the
-/pub/os2/apps/internet/www/server directory at hobbes.nmsu.edu.
-Most of them are free. The one I recommend is Web/2, available from
-http&colon.&slash.&slash.dink.org/, because it is particularly easy to install, and also
-because it is faster and more compact than the other web servers I have tried.
+:p.There is a good choice of web servers in the /pub/os2/apps/internet/www/server
+directory at http&colon.//hobbes.nmsu.edu.
+Most of them are free. The one I used to recommend is Web/2, because it was
+particularly easy to install, and also because it was faster and more compact
+than the other web servers I have tried. Because this is apparently no longer
+available, I wrote my own Web/2 equivalent called WebServe, available from
+http&colon.&slash.&slash.pmoylan.org/pages/os2/webserve.html.
 However, the choice of web server appears to be a religious issue.
 Some other people would recommend Apache or GoServe, or
 perhaps a few others. Any of these is suitable for
@@ -243,7 +245,8 @@ contain the special codes&colon.
 :dd.today's date
 :dt.     %ifilename
 :dd.the contents of file 'filename'. If this parameter is not
-terminated by a space character or end-of-line, the filename
+terminated by a space character or end-of-line, or if the filename
+itself contains space characters, then the filename
 should be enclosed in single ('') or double ("") quotation marks.
 :dt.     %v
 :dd.the version number of WFT
@@ -263,6 +266,25 @@ them, belong in the same directory as WFT.EXE. In addition, filenames
 in the %i command are interpreted relative to the directory in
 which WFT.EXE lives, unless of course you use absolute file names.
 
+:p.You may, if you wish, have different headers and footers for
+different languages. If the web browser preferred language is
+specified by a code "xy", then WFT looks for the header file
+using the following file names.
+:xmp.
+        data\DatabaseName.header.xy
+        data\DatabaseName.header
+        header.xy
+        header
+:exmp.
+and it uses the first of these that it finds. (And similarly for
+the footer file.) That means that you can have different language
+choices for different languages. For my own family tree, I have
+chosen to have Dutch and French headers and footers for that part
+of the family that is located in a region where Dutch and French are
+the dominant languages, but to have only English information for
+the other branches of the family that are located in English-speaking
+countries.
+
 .***********************************
 .*   LANGUAGE SUPPORT
 .***********************************
@@ -279,23 +301,134 @@ labels are in the file wft.en.lng.
 
 :p.
 It is easy to add support for another language. Just take one of
-the existing wft.*.lng files, copy it over with a new name that
+the existing wft.*.lng files, copy it with a new name that
 reflects the language, and translate the quoted strings in that
-new file.
+new file. If you do a translation, then I would appreciate it if
+you e-mailed me a copy that could be included in the next release.
+To give yourself credit for the job, check how to include comments
+in the language file.
 
 :p.The language that the user sees is not controlled from your
 end. It is, instead, specified in the language preferences in
 the user's web browser. (In Mozilla, for example, use the menu
 item Edit/Preferences, go to the Navigator section, and you will
-find a page called Languages.) WFT searches through the user's
+find a page called Languages. In Firefox, use Tools/Options, and go to the
+"Content" section.) WFT searches through the user's
 preferences until it finds a language code xy such that there
 is a WFT language file called wft.xy.lng. If it is impossible
 to find any supported language in the user's list, the file
 wft.en.lng is used.
 
-:p.This multilanguage support has, so far, only been tested with
-the Web/2 web server. I don't yet know what other servers will
-support it.
+:p.This multilanguage support has, so far, only been tested with the WebServe
+and Web/2 and Apache web servers. I don't yet know what other servers will support it.
+
+.***********************************
+.*   CHARACTER SETS
+.***********************************
+
+:h1 id=charsets.Character sets
+:hp2.Character sets:ehp2.
+:p.
+Every GEDCOM file contains, near the beginning, a specification of
+the character set used to encode the characters in the file. The
+specification is contained in a line that looks like
+:xmp.
+     1 CHAR ASCII
+:exmp.
+The choice of ASCII is good enough if your file contains only
+characters that can be expressed in 7-bit ASCII, but it is a poor
+choice if the information in your family tree includes accented
+characters, or characters that are not in the Latin alphabet.
+The choice of character set will probably be dictated by your own
+language, or more likely by the languages of your ancestors. If
+you need to display a wide mixture of languages, then Unicode is
+probably the only reasonable choice.
+
+:p.With some exceptions, to be noted below, WFT simply forwards
+the CHAR parameter to the web browser. If the specified set is one
+of the recognised MIME character sets, then most modern web
+browsers will know how to display it.
+
+:p.:hp2.ANSEL:ehp2.
+
+:p.ANSEL is not a character set normally recognised by web
+browsers; but it is widely used by genealogy software, so we need
+to support it. WFT supports ANSEL by translating it on the fly to
+Unicode, or more precisely UTF-8.
+
+:p.The ANSEL character set includes some "combining characters"
+that are used to produce effects like accents. Unicode also has
+combining characters, but this "overstrike" method of rendering
+accents does not always produce an aesthetically pleasing result.
+To improve the appearance of the web page, WFT checks for the
+combinations corresponding to the characters found in Western
+European languages, and replaces these by single characters
+where possible. For combinations it doesn't know about, it reverts
+to using the "overstrike" approach.
+
+:p.I have probably missed checking for some of the accented
+characters in some Eastern European languages, or in heavily annotated
+languages such as Vietnamese. If some of your characters are
+not rendered cleanly, please let me know.
+
+:p.ANSEL is designed mainly for Western European languages. It
+does not support Greek or Cyrillic characters, and it does not
+support the majority of Asian languages.
+
+:p.:hp2.UNICODE:ehp2.
+
+:p.Unicode tries to support all known written languages, and for
+many languages it will be the only good choice. Luckily, Unicode
+is fairly well supported by web browsers, so it will work with WFT.
+
+:p.Strictly speaking, Unicode is not a character set in the usual
+sense. It is a scheme that assigns numbers to writeable characters,
+but there are several standard ways of turning those numbers into
+a byte stream. The most popular realisations of Unicode are
+UTF-8, UTF-16 big-endian, UTF-16 little-endian, UTF-32 big-endian,
+and UTF-32 little-endian. (There is also a UTF-7, and even UTF-6 and
+UTF-5, but these have not achieved much popularity.) All of these
+can handle all possible Unicode code points. The difference lies
+in the encoding efficiency, with UTF-8 being best for European
+languages, UTF-16 (either variant) being best for East Asian
+languages, and UTF-32 being equally inefficient for all languages.
+
+:p.For convenience, WFT translates all five of these on the
+run to UTF-8. It has to make a decision about the 16-bit and 32-bit encodings
+before it has processed the CHAR line, so it auto-detects by
+looking for what is called a "byte order mark" at the beginning of
+the file. If there is no byte order mark then it looks for zero
+values within the first four bytes of the file. If all of these tests
+fail, WFT assumes that the character code
+is an 8-bit code. It doesn't have to know which 8-bit code it is
+until it reaches the CHAR line.
+
+:p.WFT has not yet been tested with languages that are written from
+right to left. I would be interested in hearing from anyone who is
+able to do that test. I can't read any of those languages, so I
+would not be able to tell whether the result was correct.
+
+:p.:hp2.Other special cases:ehp2.
+
+:p.Some genealogy software continues to use character set names
+that are different from the names that MIME-aware software recognises.
+WFT handles these as follows:
+
+:dl.
+:dt.   IBMPC
+:dd.This of course is ambiguous, but it is one of the standard
+character sets in the GEDCOM standard. Since the GEDCOM standard
+was written in the USA, IBMPC was probably intended to mean US-ASCII.
+(If the authors of the standard had been aware that the IBM PC
+used more than one code page, the designation IBMPC would probably
+never had been invented.) For added flexibility, WFT assumes
+(quite arbitrarily) that IBMPC means IBM850.
+:dt.   LATIN1
+:dd.We treat this as ISO-8859-1.
+:dt.   ANSI
+:dd.We treat this as WINDOWS-1252, on the grounds that this is
+what people seem to mean when they talk of the ANSI character set.
+:edl.
 
 .***********************************
 .*   DEINSTALLATION
@@ -347,7 +480,7 @@ The client invokes such a program with an http&colon.&slash.&slash. reference
 that refers to the cgi-bin directory. A typical client URL would be
 :xmp.
 
-   http&colon.&slash.&slash.eepjm.newcastle.edu.au/cgi-bin/wft.cmd?D=moylan;P=I004
+   http&colon.&slash.&slash.www.pmoylan.org/cgi-bin/wft.cmd?D=moylan&amp.P=I004
 :exmp.
 
 :p.
@@ -357,27 +490,31 @@ that in turn runs the program WFT.EXE. We could have put that
 WFT.EXE into the cgi-bin directory, but I don't believe in
 cluttering up the cgi-bin directory with lots of rubbish. After a
 while you can lose track of what is in there, which means that
-you can lose track of what clients can be doing to your machine.
+you can lose track of what clients can be doing to your machine. If
+you disagree with that opinion, you are of course free to put WFT.EXE
+into any directory that you choose, including the cgi-bin directory.
 
 :p.
 The part after the '?' in the URL specifies a parameter string
 that gets passed to WFT.EXE. WFT allows several parameters,
-separated by the ';' character. The possible parameter values are
-as follows.
+separated by the '&amp.' character. (For compatibility with earlier
+versions of WFT, it is also acceptable to use ';' instead of '&amp.'
+as the separator.) The possible parameter values are as follows.
 
 :dl break=all.
 :dt.     D=name
 :dd.This says that the data will be taken from a data file
 called name.GED. The 'D' parameter is compulsory, to
 let WFT know which database to read. (You are
-allowed to have several different GED files in your data directory.)
+allowed to have several different GED files in your data directory.
+You can even have cross-references between those GED files.)
 :dt.     P=personID
 :dd.This says which person you are looking up. The personID
 is a reference to a line in the GED file of the form
 :xmp.
                0 @personID@ INDI
 :exmp.
-which is the GEDCOM way of starting a record for this person.
+which is the GEDCOM way of starting a record for an individual.
 :p.The 'P' parameter is optional. If it is missing, the program
 will return data for the first person found in the file.
 :dt.     V=code
@@ -396,10 +533,31 @@ data. The possible values for the code are&colon.
 :dd.show everyone in the database
 :dt.                  E+
 :dd.show everyone in the database, with all details
+:dt.                  G
+:dd.show everyone in all databases
+:dt.                  G+
+:dd.show everyone in all databases, with all details
 :edl.
 
-:p.NOTE: the 'P' parameter is compulsory in the first four of
-these cases, but not in the 'E' or 'E+' cases.
+:p.NOTE: For sensible results, the 'P' parameter is needed in the first four of
+these cases. It is not needed in the 'E' or 'E+' or 'G' or 'G+' cases, and in fact including
+it might reduce the efficiency of web caches.
+
+:p.The difference between the 'E' and 'G' options is that the 'G' option
+finds cross-references to other databases, and therefore lists not only the
+current database but also those that it references.
+
+:p.If you check the web page displays, you will find that there are no buttons that
+invoke the 'G+' option. This is because this option would consume enormous
+amounts of processor time on both the client and server side. You can
+invoke this option manually, but if you do you should be prepared for a
+scenario where the WPS is locked up for an unreasonable time.
+
+:p.In my experience this is mostly a problem for OS/2 clients running Firefox.
+OS/2 has a bug - which is never going to be fixed unless we get access to the
+source code - where the WPS locks up whenever an "unfriendly" application
+(usually Firefox) keeps increasing the size of the swap file. My impression,
+though, is that this is less of a problem with Firefox version 3.
 :edl.
 
 .***********************************
@@ -442,7 +600,9 @@ time you edit the data.
 data is non-controversial. GEDCOM is the format of choice of
 almost all genealogical researchers. The fact that it appears to
 have been designed by Windows users is a non-issue here; there
-is no comparable non-Windows standard.
+is no comparable non-Windows standard. There is some software,
+e.g. Family Tree Maker, that uses a different format, but even
+then the software is usually able to import and export GEDCOM files.
 
 :p.My approach of rendering the GEDCOM date as a text-mode web
 page is less evident. If you search the web, you will find two
@@ -451,7 +611,9 @@ major approaches to displaying genealogical data:
 :ol.
 :li.Most Windows users use software that translates GEDCOM data
 into HTML files, so that the results are displayed as "normal"
-web pages.
+web pages. The present package includes a program Ged2HTML that
+will do this, but you won't need to use this unless you can't use WFT,
+for example if you are forced to use someone else's web server.
 :li.The non-Windows developers tend to use Java applets as the
 display mechanism.
 :eol.
@@ -488,9 +650,19 @@ uncatalogued by the search engines.
 :p.To use this program, you need your family tree in GEDCOM format.
 You can create this with a plain text editor, but it would be a
 tedious job. A better approach would be to get a program
-like GenJ, available from http&colon.&slash.&slash.www.meiers.net/nils/.
+like GenJ, available from http&colon.&slash.&slash.genj.sourceforge.net/wiki/doku.php.
+(In my opinion, version 1.9.1 is a major improvement over later versions,
+but that's a question of personal taste.)
 If you don't like that one, a web search on terms like 'GEDCOM' will
 turn up various other editors.
+
+:p.Note that your ability to run Java programs will
+depend on the version(s) of Java that you have installed. To the best of
+my knowledge, OS/2 does not support Java beyond version 1.4.2, while the
+most recent releases of GenJ require version 1.6. (Also known as Java
+version 5. When it comes to version numbering, the Java advocates are
+as devious as the company whose first version of Windows NT was version
+3.1, to compete with OS/2 version 3.)
 
 :p.Strictly speaking, you don't need WFT once you have GenJ, because
 GenJ has its own way, using a Java applet, of displaying the results in
@@ -507,11 +679,15 @@ for storing genealogical data. It was created by The Church of
 Jesus Christ of Latter-Day Saints, a church that has a strong
 interest in collecting genealogical information and that has
 large historical databases. You don't have to be a member of the
-LDS church to use its standard. If you are the sort of person who
+LDS church to use its standard. (Or to use its published data.
+There is a great deal of very useful genealogical data on the
+LDS web site.)
+If you are the sort of person who
 likes reading standards documents, you can find the standard
 by doing a web search for "GEDCOM Standard". The home of the standard
 is at http&colon.//www.familysearch.org, but I have found that it is
-easier to find copies at other web sites.
+easier to find copies at other web sites, and in fact I can no longer
+find the standard at the familysearch.org site.
 
 :p.If you exchange genealogical files with other people, there is a
 very high probability that they will already be in GEDCOM format.
@@ -560,18 +736,52 @@ you could edit that line to read
 (To be honest, I suspect that particular example will not
 work, because I have no experience with rendering right-to-left
 scripts. It is possible that the names will be rendered
-backwards.)
+backwards. I would appreciate hearing from people who use right-to-left
+scripts, because so far I have no good examples to test.)
 
 :p.The character sets that you can safely use in the CHAR lines are
 the ones supported by popular web browsers. To get an idea of what
 should work, view a web page that uses your preferred script, and
-then use the Mozilla View->Page Info menu option to see what
+then use the Mozilla View->Page Info menu option, or the Firefox
+View->Character Encoding menu option,
+ to see what
 character encoding it is using.
 
-:p.Note that some family tree editors, for example GenJ, will
+:p.WFT can also handle some character sets used by popular genealogy
+software but not supported by web browsers. (It does this by translating
+the data into a format that web browsers do understand.) These are
+described on the
+":link reftype=hd refid=charsets.Character sets:elink."
+page of this manual.
+
+:p.Note that some family tree editors, for example GenJ and Family
+Tree Maker, will
 "correct" your character set specification to one that you don't want.
 Luckily, it's a simple matter to use a plain text editor, after
 doing the main editing job, to repair the "correction".
+
+:p.:hp2.ANSEL support in WFT:ehp2.
+
+:p.In addition to the character sets that web browsers support,
+WFT lets you use GEDCOM files that have the character set
+specification
+:xmp.
+   1 CHAR ANSEL
+:exmp.
+Sending such a file directly to a web browser wouldn't work,
+because no web browser, as far as I know, will accept ANSEL as
+a character set. To get around this, WFT does on-the-fly
+translation from ANSEL to UTF-8. This is a slight extra overhead,
+but it is justified on the grounds that so much of the software
+for editing GEDCOM files will end up turning it into ANSEL anyway.
+
+:p.:hp2.Image files:ehp2.
+
+:p.WFT supports the display of photographs for individual and/or
+family records,
+but this might require the manual editing of your *.GED files.
+For details, see the
+:link reftype=hd refid=imagefiles.image files page:elink..
 
 :p.:hp2.Cross-references between Gedcom files:ehp2.
 
@@ -580,19 +790,60 @@ by several different people. (In my case, I'm dealing with
 several separate branches of the family, researched by five
 different people.) Of course,
 it's not hard to develop software that will do a "merge" of
-two or more databases, but that has two disadvantages:
+two or more databases, but that has three disadvantages:
 :ul compact.
 :li.it can create very large files; and
+:li.it is possible that the different files are using different character sets; and
 :li.it ignores the fact that the original files are probably
 being updated from time to time.
 :eul.
 
 :p.The WFT solution to that is to permit cross-references between
 files. The mechanism is explained on the
-:link reftype=hd refid=crossref.following page:elink.. Although
+:link reftype=hd refid=crossref.cross-reference page:elink.. Although
 this is not yet supported by the GEDCOM standard, it seems
 likely that some future revision of the standard will support
 a similar mechanism.
+
+.***********************************
+.*   IMAGE FILES
+.***********************************
+
+:h2 id=imagefiles.Image files
+:hp2.Image files:ehp2.
+
+:p.The GEDCOM standard allows for the inclusion of multimedia
+files, but it is a little vague about the mechanism for doing this.
+WFT assumes that every such image file is a picture with a format
+that most web browsers will support (e.g. JPEG, GIF). If it can
+find the file, it will display it.
+
+:p.Unfortunately, there is no clear specification of how an image
+file name is to be interpreted. Programs like GenealogyJ assume that
+the picture is a file with a filename in the local file system, but
+web browsers don't know about the local file system; they can only
+access files in the directory that the web server has designated as
+its "HTML root" directory, and its subdirectories.
+
+:p.As a compromise, WFT assumes that any image file is in the /images
+directory of the web server file structure. Programs like GenJ don't
+assume that. That means that
+:ul.
+:li. If you have a photograph that you want to display, you should
+copy it to the the /images subdirectory of your HTML root directory.
+:li. If you've specified the image location via a program like GenJ,
+you will probably have to manually edit the *.GED file to fix up the
+file name.
+:eul.
+
+:p.Remark: the GEDCOM standard also allows for the possibility of
+embedded (and suitably encoded) multimedia data within the GED file
+itself. I have chosen not to support that option, at least in the
+present version, because doing it that way would create very large
+GED files, and would also create an extra time/space delay because
+of the overhead of decoding the embedded data and transmitting it to
+the web client. If anyone has a need for this option, please let
+me know.
 
 .***********************************
 .*   CREATING A CROSS-REFERENCE
@@ -650,6 +901,9 @@ utility after editing a file with GenJ.
 The following programs are not needed for WFT to work. They
 are simply extra utilities that you may use if you wish.
 
+:p.Some of them have the side-effect that, if the original source file is UTF-16 or UTF-32, the
+output file will be in UTF-8. No information is lost.
+
 :p.:hp2.The GEDSORT utility:ehp2.
 
 :p.The WFT zip file also contains a program called GEDSORT.EXE.
@@ -675,7 +929,9 @@ them manually.
 such as having a loop in the tree. Again, you specify one
 filename parameter when you run this program. It does not alter
 the data file, it simply writes the results of its analysis
-to standard output (usually the screen).
+to standard output (usually the screen, but you can redirect it
+to a file, or pipe it to another program, using the usual
+command-line syntax for redirecting).
 
 :p.:hp2.The SUBSET utility:ehp2.
 
@@ -691,7 +947,7 @@ family tree only via those ancestors. An example of using it is
 :exmp.
 In effect, what you get is a subtree of the original tree, but it
 is not strictly speaking a tree, because it also includes things
-like the ancestors of the spouses of the descendants of the original
+like the ancestors of the spouses of the descendants of the originally
 specified node.
 
 :p.:hp2.The TIDY utility:ehp2.
@@ -709,16 +965,66 @@ information.
 It repairs three problems that can be caused by editing your GEDCOM
 file with the GenealogyJ program&colon.
 :ul.
-:li.GenJ deletes your CHAR specification and replaces it with
-CHAR IBMPC (which is of course ambiguous). The original CHAR line
-is lost, so this program reads the first line from a file called
-CHAR from the current directory to find the character set you really want.
+:li.If your CHAR specification is something that GenJ does not
+understand, it deletes it and replaces it with something else.
+(Probably either the ambiguous CHAR IBMPC or CHAR ANSEL, depending
+on which version of GenJ you have.) The original CHAR line
+is lost. FIXGEN reads the first line from a file called
+CHAR in the current directory to find the character set you really want.
+If you want FIXGEN to leave the CHAR line alone, just make sure that
+you don't have a file called CHAR in the current directory.
 :li.Surnames containing the '/' character have an extra space
 character inserted. Fixgen removes the space.
 :li.External links, i.e. those containing a '&colon.' character, have
 had the surrounding '@' delimiters deleted. Fixgen reinserts the
 missing '@' delimiters.
+
 :eul.
+
+:p.:hp2.The FIXUP utility:ehp2.
+
+:p.This is a script that invokes all of fixgen, tidy, gedsort, and
+lint. I use this script myself each time I have run GenJ, to clean
+up my files and check for errors. (To check for errors, open the plain
+text file called xxx.lint, where xxx is the name of your database.)
+
+.***********************************
+.*   Ged2HTML
+.***********************************
+
+:h1 id=ged2html.The Ged2HTML program
+:hp2.Ged2HTML:ehp2.
+
+:p.
+The WFT distribution contains one extra program called Ged2HTML.
+This is for the benefit of people who want to convert GEDCOM
+files into HTML web pages, and who can't use WFT directly
+because they don't have a web server. It takes one parameter,
+which is the name of a GED file without the ".GED" extension. For
+example,
+:xmp.
+
+               ..\Ged2HTML Moylan
+
+:exmp.
+reads the Moylan.GED file and produces another file Moylan.HTML.
+:link reftype=hd refid=crossref.Cross-references:elink.
+are supported, so that if you have several
+GED files you can use this program to produce several HTML files.
+The result is similar to the "display all" option in WFT.
+
+:p.
+The main disadvantage of this approach is that it produces very
+large HTML files. This is not a problem with old web browsers
+such as WebExplorer. Newer browsers (Mozilla, Internet Explorer,
+etc.) have tended to suffer from the modern tendency to write
+very slow software. The pages load quickly enough, but then take
+a very long time to be rendered to the screen. (As a general rule,
+new software, including new versions of a popular operating
+system, seems to be inferior to older versions of the same
+program. Why?)
+Nevertheless, this
+solution might be acceptable if you have no other option.
 
 .***********************************
 .*   PRIVACY

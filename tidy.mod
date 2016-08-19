@@ -7,7 +7,7 @@ MODULE Tidy;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            24 December 2004                *)
-        (*  Last edited:        26 December 2004                *)
+        (*  Last edited:        17 February 2009                *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -176,7 +176,7 @@ PROCEDURE TidyDatabase (infile: FilenameString);
         done: BOOLEAN;
 
     BEGIN
-        TB := OpenForReading (infile);
+        TB := OpenForReading (infile, TRUE);
         IF NOT TBFileOpened(TB) THEN
             WriteString ("Sorry, file ");
             WriteString (infile);

@@ -1,0 +1,35 @@
+DEFINITION MODULE WftClock;
+
+        (********************************************************)
+        (*                                                      *)
+        (*       Conversion of date and time to string          *)
+        (*                                                      *)
+        (*    This is actually a modified version of my module  *)
+        (*    MyClock, stripped down to include only the code   *)
+        (*    needed for WFT.                                   *)
+        (*                                                      *)
+        (*  Programmer:         P. Moylan                       *)
+        (*  Started:            14 May 2007                     *)
+        (*  Last edited:        18 May 2007                     *)
+        (*  Status:             OK                              *)
+        (*                                                      *)
+        (********************************************************)
+
+
+PROCEDURE ConvertDateTime (date, time: CARDINAL;
+                            VAR (*OUT*) result: ARRAY OF CHAR);
+
+    (* Converts a date and time from the file system format to the GMT  *)
+    (* string required by HTTP 1.1.  The format is                      *)
+    (* "Mon, 29 Jun 1998 02:28:12 GMT", with all fields fixed length.   *)
+
+PROCEDURE AppendDateTime (date, time: CARDINAL;
+                            VAR (*INOUT*) result: ARRAY OF CHAR);
+
+    (* Converts a date and time from the file system format to the GMT  *)
+    (* string required by HTTP 1.1.  The format is                      *)
+    (* "Mon, 29 Jun 1998 02:28:12 GMT", with all fields fixed length.   *)
+    (* This string, without the quotes, is appended to result.          *)
+
+END WftClock.
+

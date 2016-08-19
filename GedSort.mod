@@ -6,7 +6,7 @@ MODULE GedSort;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            13 July 2001                    *)
-        (*  Last edited:        02 December 2001                *)
+        (*  Last edited:        24 February 2009                *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -47,7 +47,7 @@ CONST
     Tracing = TRUE;
     Debugging = FALSE;
     DefaultInput = "test";
-    SortBufferSize = 512;
+    SortBufferSize = 400;
 
 TYPE
     FilenameString = ARRAY [0..511] OF CHAR;
@@ -191,7 +191,7 @@ PROCEDURE InMemorySort (VAR (*INOUT*) file: FilenameString;  N: CARDINAL);
         END (*IF*);
 
         IF N > 0 THEN
-            TB := OpenForReading (file);
+            TB := OpenForReading (file, TRUE);
             StartReading (TB, NextLevel, NextLine);
             count := 0;
 
@@ -245,7 +245,7 @@ PROCEDURE FileMerge (file1, file2: FilenameString;
         N1 := 0;  N2 := 0;
 
         FOR j := 1 TO 2 DO
-            TB[j] := OpenForReading (file[j]);
+            TB[j] := OpenForReading (file[j], TRUE);
             StartReading (TB[j], NextLevel[j], NextLine[j]);
             LoadNextRecord (TB[j], T[j], NextLevel[j], NextLine[j], done[j]);
         END (*FOR*);
@@ -307,7 +307,7 @@ PROCEDURE SortFile (VAR (*INOUT*) file: FilenameString;  N: CARDINAL);
 
             (* Read half the file into file1, the other half into file2. *)
 
-            TB := OpenForReading (file);
+            TB := OpenForReading (file, TRUE);
             StartReading (TB, NextLevel, NextLine);
 
             cid1 := OpenNewOutputFile (file1);
@@ -377,7 +377,7 @@ PROCEDURE SortDatabase (file: FilenameString);
         done: BOOLEAN;
 
     BEGIN
-        TB := OpenForReading (file);
+        TB := OpenForReading (file, TRUE);
         IF NOT TBFileOpened(TB) THEN
             WriteString ("Sorry, file ");
             WriteString (file);
@@ -438,7 +438,7 @@ PROCEDURE SortDatabase (file: FilenameString);
         (* then all the INDI records, then everything else.             *)
 
         WriteString ("Final pass");  WriteLn;
-        TB := OpenForReading (file0);
+        TB := OpenForReading (file0, TRUE);
         maincid := OpenNewOutputFile (file2);
         StartReading (TB, NextLevel, NextLine);
         LoadNextRecord (TB, RecTree, NextLevel, NextLine, done);

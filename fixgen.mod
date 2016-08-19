@@ -7,19 +7,21 @@ MODULE FixGen;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            28 December 2004                *)
-        (*  Last edited:        13 January 2005                 *)
+        (*  Last edited:        24 December 2013                *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (*    This program takes the name of one GEDCOM file    *)
         (*    as its only parameter.  It repairs three problems *)
         (*    that can be caused by editing your GEDCOM file    *)
         (*    with the GenealogyJ program:                      *)
-        (*      1. GenJ deletes your CHAR specification and     *)
-        (*         replaces it with CHAR IBMPC (which is of     *)
-        (*         course ambiguous).  The original CHAR line   *)
-        (*         is lost, so this program reads a file CHAR   *)
-        (*         from the current directory to find the       *)
-        (*         character set you really want.               *)
+        (*      1. If your CHAR specification is something      *)
+        (*         that GenJ does not understand, then GenJ     *)
+        (*         replaces it with something of its own        *)
+        (*         choice (probably CHAR IBMPC or CHAR ANSEL,   *)
+        (*         depending on version.  The original CHAR     *)
+        (*         line is lost, so this program reads a file   *)
+        (*         called CHAR from the current directory to    *)
+        (*         find the character set you really want.      *)
         (*      2. Surnames containing the '/' character have   *)
         (*         an extra space character inserted.  We       *)
         (*         remove the space.                            *)
@@ -234,13 +236,14 @@ PROCEDURE TidyDatabase (infile: FilenameString);
     BEGIN
         (* Read the character set file if present. *)
 
-        cid1 := OpenOldFile ('CHAR', FALSE);
+        OurCharset[0] := Nul;
+        cid1 := OpenOldFile ('CHAR', FALSE, FALSE);
         IF cid1 <> NoSuchChannel THEN
             ReadLine (cid1, OurCharset);
             CloseFile (cid1);
         END (*IF*);
 
-        TB := OpenForReading (infile);
+        TB := OpenForReading (infile, TRUE);
         IF NOT TBFileOpened(TB) THEN
             WriteString ("Sorry, file ");
             WriteString (infile);
@@ -265,7 +268,7 @@ PROCEDURE TidyDatabase (infile: FilenameString);
                 IF NOT done THEN
                     IF ThisLine[0] = '0' THEN
                         done := TRUE;
-                    ELSIF KwdMatch (ThisLine, '1 CHAR IBMPC', k) THEN
+                    ELSIF KwdMatch (ThisLine, '1 CHAR', k) THEN
                         ThisLine[7] := Nul;
                         Strings.Append (OurCharset, ThisLine);
                         k := 0;
@@ -293,7 +296,7 @@ PROCEDURE TidyDatabase (infile: FilenameString);
         CloseTB (TB);
         CloseFile (cid1);
 
-        (* The new version of the database is now in tempfil2.  Delete  *)
+        (* The new version of the database is now in tempfile.  Delete  *)
         (* the original, and rename tempfile to the original file name. *)
 
         DeleteFile (infile);

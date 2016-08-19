@@ -1,16 +1,17 @@
-IMPLEMENTATION MODULE GELookup;
+IMPLEMENTATION MODULE GEDLook;
 
         (********************************************************)
         (*                                                      *)
-        (*      Web Family Tree: module to find records in      *)
-        (*                  a GEDCOM file                       *)
+        (*       Modified version of module GELookup for        *)
+        (*                 use in Ged2HTML                      *)
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
-        (*  Started:            7 July 2001                     *)
-        (*  Last edited:        3 January 2011                  *)
+        (*  Started:            30 August 2005                  *)
+        (*  Last edited:        17 February 2009                *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
+
 
 FROM SYSTEM IMPORT
     (* type *)  CARD16;
@@ -35,11 +36,12 @@ FROM TextBuffers IMPORT
     (* proc *)  OpenForReading, TBFileOpened, CloseTB,
                 TBCurrentPosition, TBSetPosition, TBStartPosition;
 
-FROM FileOps IMPORT
-    (* type *)  FilePos;
-
 FROM STextIO IMPORT
     (* proc *)  WriteString, WriteLn;
+
+FROM FileOps IMPORT
+    (* type *)  ChanId, FilePos,
+    (* proc *)  FWriteString, FWriteLn;
 
 FROM Storage IMPORT
     (* proc *)  ALLOCATE, DEALLOCATE;
@@ -177,16 +179,11 @@ PROCEDURE ProcessHeadRecord (DB: Database);
         (*       ANSI  -> Windows-1252                                  *)
         (*       ANSEL -> UTF-8                                         *)
         (*       LATIN1 -> ISO-8859-1                                   *)
-        (*       UNICODE -> UTF-8                                       *)
-        (*       UTF-16 or UTF16 -> UTF-8                               *)
+        (*       UNICODE -> (not yet handled)                           *)
         (* In the IBMPC case the caller will convert the empty string   *)
         (* to a default which is decided at a higher level. In the      *)
         (* ANSEL case, DB^.UsesANSEL will cause an ANSEL-to-UTF8        *)
         (* translation to be invoked when a GEDCOM line is fetched.     *)
-        (* UNICODE can mean either 8-bit or 16-bit, big-endian or       *)
-        (* little-endian, but we don't need to worry about that         *)
-        (* because UTF-16 is preprocessed into UTF-8 by module          *)
-        (* TextBuffers.                                                 *)
 
         IF DB^.Charset[0] <> Nul THEN
             IF Strings.Equal (DB^.Charset, "IBMPC") THEN
@@ -195,10 +192,6 @@ PROCEDURE ProcessHeadRecord (DB: Database);
                 Strings.Assign ("ISO-8859-1", DB^.Charset);
             ELSIF Strings.Equal (DB^.Charset, "ANSI") THEN
                 Strings.Assign ("windows-1252", DB^.Charset);
-            ELSIF Strings.Equal (DB^.Charset, "UNICODE")
-                          OR Strings.Equal (DB^.Charset, "UTF-16")
-                          OR Strings.Equal (DB^.Charset, "UTF16") THEN
-                Strings.Assign ("UTF-8", DB^.Charset);
             ELSIF Strings.Equal (DB^.Charset, "ANSEL") THEN
                 Strings.Assign ("UTF-8", DB^.Charset);
                 DB^.UsesANSEL := TRUE;
@@ -214,7 +207,7 @@ PROCEDURE OpenDatabase (VAR (*OUT*) DB: Database;
 
     (* Opens a GEDCOM file. *)
 
-    VAR filename, indexname: FilenameString;
+    VAR filename: FilenameString;
         p, previous: OpenedPtr;
 
     BEGIN
@@ -235,19 +228,19 @@ PROCEDURE OpenDatabase (VAR (*OUT*) DB: Database;
                 END (*IF*);
                 NEW (DB);  p^.this := DB;
                 DB^.name := DatabaseName;
-                DB^.UsesANSEL := FALSE;
-                Strings.Assign ("data\", filename);
-                Strings.Append (DatabaseName, filename);
-                indexname := filename;
+                Strings.Assign (DatabaseName, filename);
                 Strings.Append (".GED", filename);
                 DB^.TB := OpenForReading (filename, TRUE);
                 IF NOT TBFileOpened (DB^.TB) THEN
+                    WriteString ("Cannot open file ");
+                    WriteString (filename);
+                    WriteLn;
                     CloseTB (DB^.TB);
                     DISPOSE (DB);
                     p^.this := NIL;
                     RETURN FALSE;
                 ELSE
-                    DB^.index := OpenIndex (DB^.TB, indexname);
+                    DB^.index := OpenIndex (DB^.TB, DatabaseName);
                     ProcessHeadRecord (DB);
                     RETURN TRUE;
                 END (*IF*);
@@ -312,16 +305,6 @@ PROCEDURE CharSetOf (DB: Database;  VAR (*OUT*) CharSetName: DataString);
     BEGIN
         Strings.Assign (DB^.Charset, CharSetName);
     END CharSetOf;
-
-(************************************************************************)
-
-PROCEDURE WriteDatabaseName (DB: Database);
-
-    (* Writes the name of this database. *)
-
-    BEGIN
-        WriteString (DB^.name);
-    END WriteDatabaseName;
 
 (************************************************************************)
 
@@ -874,7 +857,7 @@ PROCEDURE CopyTree (RecTree: RecordTree): RecordTree;
 
 (************************************************************************)
 
-PROCEDURE DisplayRawLinesN (T: RecordTree;  N: CARDINAL);
+PROCEDURE DisplayRawLinesN (cid: ChanId;  T: RecordTree;  N: CARDINAL);
 
     (* Displays the contents of the tree, labelled with level N and     *)
     (* below.                                                           *)
@@ -883,25 +866,25 @@ PROCEDURE DisplayRawLinesN (T: RecordTree;  N: CARDINAL);
 
     BEGIN
         WHILE T <> NIL DO
-            WriteString ("<br>");
+            FWriteString (cid, "<br>");
             FOR j := 1 TO 4*N DO
-                WriteString ("&nbsp;");
+                FWriteString (cid, "&nbsp;");
             END (*FOR*);
-            WriteString (T^.this);
-            WriteLn;
-            DisplayRawLinesN (T^.down, N+1);
+            FWriteString (cid, T^.this);
+            FWriteLn (cid);
+            DisplayRawLinesN (cid, T^.down, N+1);
             T := T^.next;
         END (*WHILE*);
     END DisplayRawLinesN;
 
 (************************************************************************)
 
-PROCEDURE DisplayRawLines (RecTree: RecordTree);
+PROCEDURE DisplayRawLines (cid: ChanId;  RecTree: RecordTree);
 
-    (* Displays the contents of the tree. *)
+    (* Writes the contents of the tree. *)
 
     BEGIN
-        DisplayRawLinesN (RecTree, 1);
+        DisplayRawLinesN (cid, RecTree, 1);
     END DisplayRawLines;
 
 (************************************************************************)
@@ -988,52 +971,6 @@ PROCEDURE ExtractEither (kwd1, kwd2: ARRAY OF CHAR;
 
 (************************************************************************)
 
-PROCEDURE IsUnwanted (line: Line): BOOLEAN;
-
-    (* Returns TRUE iff line starts with a keyword that we want *)
-    (* to reject.                                               *)
-
-    BEGIN
-        IF line[0] = '_' THEN
-            RETURN TRUE;
-        END (*IF*);
-        IF HeadMatch (line, "RIN") THEN
-            RETURN TRUE;
-        END (*IF*);
-        RETURN FALSE;
-    END IsUnwanted;
-
-(************************************************************************)
-
-PROCEDURE RemoveUnwantedRecords (VAR (*INOUT*) T: RecordTree);
-
-    (* Strips out all records, at the current level, that WFT doesn't   *)
-    (* want to know about.  When a record is discarded then of course   *)
-    (* its subrecords are already discarded.                            *)
-
-    VAR previous, current, next: RecordTree;
-
-    BEGIN
-        previous := NIL;  current := T;
-        WHILE current <> NIL DO
-            next := current^.next;
-            IF IsUnwanted (current^.this) THEN
-                DiscardTree (current^.down);
-                DISPOSE (current);
-                IF previous = NIL THEN
-                    T := next;
-                ELSE
-                    previous^.next := next;
-                END (*IF*);
-            ELSE
-                previous := current;
-            END (*IF*);
-            current := next;
-        END (*WHILE*);
-    END RemoveUnwantedRecords;
-
-(************************************************************************)
-
 PROCEDURE CopySubrecord (keyword: ARRAY OF CHAR;
                             T: RecordTree;
                             VAR (*OUT*) data: Line;
@@ -1080,44 +1017,6 @@ PROCEDURE GetField (keyword: ARRAY OF CHAR;  VAR (*INOUT*) T: RecordTree;
 
 (************************************************************************)
 
-PROCEDURE GetContinuation (VAR (*INOUT*) T: RecordTree;
-                           VAR (*OUT*) data: Line;
-                           VAR (*OUT*) IsCONT: BOOLEAN): BOOLEAN;
-
-    (* Like GetField, but looks only at the first record in T, and      *)
-    (* reports success only if that first record is a CONC or CONT      *)
-    (* record.  The IsCONT parameter is returned as TRUE if it was      *)
-    (* a CONT record we found.                                          *)
-
-    VAR first: RecordTree;  found: BOOLEAN;
-
-    BEGIN
-        IsCONT := FALSE;
-        found := T <> NIL;
-        IF found THEN
-            data := T^.this;
-            IF HeadMatch (data, "CONT") THEN
-                IsCONT := TRUE;
-            ELSE
-                found := HeadMatch (data, "CONC");
-            END (*IF*);
-        END (*IF*);
-
-        IF found THEN
-            first := T;
-            DiscardTree (first^.down);
-            T := first^.next;
-            DISPOSE (first);
-        ELSE
-            data[0] := Nul;
-        END (*IF*);
-
-        RETURN found;
-
-    END GetContinuation;
-
-(************************************************************************)
-
 PROCEDURE CopyField (keyword: ARRAY OF CHAR;  T: RecordTree;
                                   VAR (*OUT*) data: DataString): BOOLEAN;
 
@@ -1138,7 +1037,7 @@ PROCEDURE CopyField (keyword: ARRAY OF CHAR;  T: RecordTree;
 
 PROCEDURE ProcessName (VAR (*INOUT*) name: DataString);
 
-    (* Handles the '/' delimiters in name.  Also deletes trailing spaces. *)
+    (* Handles the '/' delimiters in name. *)
 
     VAR j1, j2: CARDINAL;  found: BOOLEAN;
 
@@ -1169,14 +1068,6 @@ PROCEDURE ProcessName (VAR (*INOUT*) name: DataString);
             END (*IF*);
             *)
         END (*IF*);
-
-        (* Delete trailing spaces. *)
-
-        j2 := LENGTH(name);
-        WHILE (j2 > 0) AND (name[j2-1] = ' ') DO
-            DEC (j2);  name[j2] := Nul;
-        END (*WHILE*);
-
     END ProcessName;
 
 (************************************************************************)
@@ -1214,24 +1105,6 @@ PROCEDURE CopyName (T: RecordTree;  VAR (*OUT*) name: DataString): BOOLEAN;
 (*                          DATE OPERATIONS                             *)
 (************************************************************************)
 
-PROCEDURE Numeric (VAR (*IN*) str: ARRAY OF CHAR): BOOLEAN;
-
-    (* Returns TRUE iff str consists of decimal digits. *)
-
-    VAR k: CARDINAL;
-
-    BEGIN
-        IF str[0] = Nul THEN RETURN FALSE END(*IF*);
-        k := 0;
-        LOOP
-            IF str[k] = Nul THEN RETURN TRUE END(*IF*);
-            IF (str[k] < '0') OR (str[k] > '9') THEN RETURN FALSE END(*IF*);
-            INC (k);
-        END (*LOOP*);
-    END Numeric;
-
-(************************************************************************)
-
 PROCEDURE GetYear (T: RecordTree;  keyword: ARRAY OF CHAR;
                                    VAR (*OUT*) result: DataString);
 
@@ -1252,14 +1125,7 @@ PROCEDURE GetYear (T: RecordTree;  keyword: ARRAY OF CHAR;
 
                 Strings.FindPrev (' ', result, LENGTH(result), found, pos);
                 IF found THEN
-                    Strings.Delete (result, 0, pos+1);
-                END (*IF*);
-
-                (* An obvious filter here is to check whether the       *)
-                (* result is numeric.                                   *)
-
-                IF NOT Numeric(result) THEN
-                    result[0] := Nul;
+                    Strings.Delete (result, 0, pos);
                 END (*IF*);
 
             ELSE
@@ -1300,31 +1166,32 @@ PROCEDURE GetDateRange (T: RecordTree;  VAR (*OUT*) range: DataString);
 (*                    WRITING A LINK TO STANDARD OUTPUT                 *)
 (************************************************************************)
 
-PROCEDURE WritePersonLink2 (lang: LangHandle;  DB: Database;
-                               PersonID: IDString;  AddDate: BOOLEAN;
-                                    VAR (*INOUT*) PersonData: RecordTree;
-                                    VAR (*INOUT*) width: CARDINAL);
+PROCEDURE WritePersonLink2 (cid: ChanId;  lang: LangHandle;  DB: Database;
+                               PersonID: IDString;
+                                 AddDate, external: BOOLEAN;
+                                    VAR (*INOUT*) PersonData: RecordTree);
 
-    (* Like WritePersonLinkClipped, but for the case where the caller  *)
-    (* has already loaded the information for this person into         *)
-    (* PersonData.                                                     *)
+    (* Like WritePersonLink, but for the case where the caller  *)
+    (* has already loaded the information for this person into  *)
+    (* PersonData.                                              *)
 
-    VAR HisName: DataString;  L: CARDINAL;  private: BOOLEAN;
+    VAR HisName: DataString;  private: BOOLEAN;
 
     BEGIN
         private := GetField ('RESN PRIVACY', PersonData, HisName);
 
-            (* Privacy restriction: we can report the name but not      *)
-            (* provide a link.                                          *)
+            (* Privacy restriction: we can report the name but  *)
+            (* not provide a link.                              *)
 
         IF NOT private THEN
-            WriteString ('<a href="');
-            WriteString (progname);
-            WriteString ('?D=');
-            WriteString (DB^.name);
-            WriteString ('&P=');
-            WriteString (PersonID);
-            WriteString ('">');
+            FWriteString (cid, '<a href=');
+            IF external THEN
+                FWriteString (cid, DB^.name);
+                FWriteString (cid, '.html');
+            END (*IF*);
+            FWriteString (cid, '#');
+            FWriteString (cid, PersonID);
+            FWriteString (cid, '>');
         END (*IF*);
 
         (* Now fill in the person's name. *)
@@ -1332,68 +1199,40 @@ PROCEDURE WritePersonLink2 (lang: LangHandle;  DB: Database;
         IF (NOT GetName (PersonData, HisName)) OR (HisName[0] = Nul) THEN
             StrToBuffer (lang, "GELookup.NameNotRecorded", HisName);
         END (*IF*);
-        L := LENGTH(HisName);
-        IF L > width THEN
-            HisName[width] := Nul;
-            width := 0;
-        ELSE
-            DEC (width, L);
-        END (*IF*);
-
-        WriteString (HisName);
+        FWriteString (cid, HisName);
 
         IF NOT private THEN
-            WriteString ('</a>');
+            FWriteString (cid, '</a>');
         END (*IF*);
 
         IF AddDate THEN
             GetDateRange (PersonData, HisName);
-            WriteString ("&nbsp;&nbsp;");
-            WriteString (HisName);
+            FWriteString (cid, "&nbsp;&nbsp;");
+            FWriteString (cid, HisName);
         END (*IF*);
 
     END WritePersonLink2;
 
 (************************************************************************)
 
-PROCEDURE WritePersonLink (lang: LangHandle;  DB: Database;
-                                 PersonID: IDString);
+PROCEDURE WritePersonLink (cid: ChanId;  lang: LangHandle;  DB: Database;
+                                 PersonID: IDString; external: BOOLEAN);
 
     (* Turns PersonID into an HTML reference, and writes it to  *)
     (* standard output.                                         *)
-
-    VAR T: RecordTree;  dummy: CARDINAL;
-
-    BEGIN
-        SeekToMatchingID (DB, PersonID);
-        LoadRecord (DB, T);
-        dummy := MAX(CARDINAL);
-        WritePersonLink2 (lang, DB, PersonID, FALSE, T, dummy);
-        DiscardTree (T);
-    END WritePersonLink;
-
-(************************************************************************)
-
-PROCEDURE WritePersonLinkClipped (lang: LangHandle;  DB: Database;
-                                   PersonID: IDString;
-                                   VAR (*INOUT*) width: CARDINAL);
-
-    (* Like WritePersonLink, but does not write more than width *)
-    (* characters, and decrements width by the number of        *)
-    (* characters written.                                      *)
 
     VAR T: RecordTree;
 
     BEGIN
         SeekToMatchingID (DB, PersonID);
         LoadRecord (DB, T);
-        WritePersonLink2 (lang, DB, PersonID, FALSE, T, width);
+        WritePersonLink2 (cid, lang, DB, PersonID, FALSE, external, T);
         DiscardTree (T);
-    END WritePersonLinkClipped;
+    END WritePersonLink;
 
 (************************************************************************)
 
 BEGIN
     AlreadyOpened := NIL;
-END GELookup.
+END GEDLook.
 

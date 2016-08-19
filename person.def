@@ -7,7 +7,7 @@ DEFINITION MODULE Person;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            6 July 2001                     *)
-        (*  Last edited:        24 January 2005                 *)
+        (*  Last edited:        1 December 2007                 *)
         (*  Status:             OK                              *)
         (*                                                      *)
         (********************************************************)
@@ -18,6 +18,9 @@ FROM Languages IMPORT
 
 FROM OurTypes IMPORT
     (* type *)  IDString, DataString, FilenameString;
+
+FROM GELookup IMPORT
+    (* type *)  RecordTree;
 
 TYPE
     PersonData;        (* is private *)
@@ -38,7 +41,17 @@ PROCEDURE DiscardPersonData (VAR (*INOUT*) data: PersonData);
 
     (* Disposes of the PersonData information. *)
 
-PROCEDURE DisplayPerson (lang: LangHandle;  data: PersonData);
+PROCEDURE TreeForPerson (P: PersonData): RecordTree;
+
+    (* Translates a person to a record tree. *)
+
+PROCEDURE PersonHeading (lang: LangHandle;  T: RecordTree;
+                            VAR (*OUT*) result: DataString);
+
+    (* Constructs a string showing name and years of birth-death. *)
+
+PROCEDURE DisplayPerson (lang: LangHandle;  data: PersonData;
+                                      VAR (*IN*) heading: DataString);
 
     (* Displays the information in the PersonData record. *)
 
@@ -58,6 +71,14 @@ PROCEDURE DisplayEveryone (lang: LangHandle;  dummy: PersonData;
     (* Displays the names of everyone in the database.  The person      *)
     (* mentioned in the argument is unimportant, but we need some       *)
     (* person record so that we can identify the database.              *)
+
+PROCEDURE DisplayEveryEveryone (lang: LangHandle;  dummy: PersonData;
+                                              ShowDetails: BOOLEAN);
+
+    (* Displays the names of everyone in the database, and in all       *)
+    (* databases linked from this one.  The person mentioned in the     *)
+    (* argument is unimportant, but we need some person record so that  *)
+    (* we can identify a starting point.                                *)
 
 END Person.
 

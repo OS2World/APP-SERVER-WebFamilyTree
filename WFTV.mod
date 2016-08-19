@@ -1,7 +1,7 @@
 (**************************************************************************)
 (*                                                                        *)
-(*  PMOS/2 software library                                               *)
-(*  Copyright (C) 2014   Peter Moylan                                     *)
+(*  Version number of the WFT CGI script.                                 *)
+(*  Copyright (C) 2016   Peter Moylan                                     *)
 (*                                                                        *)
 (*  This program is free software: you can redistribute it and/or modify  *)
 (*  it under the terms of the GNU General Public License as published by  *)
@@ -20,19 +20,17 @@
 (*                                                                        *)
 (**************************************************************************)
 
-IMPLEMENTATION MODULE Types;
+IMPLEMENTATION MODULE WFTV;
 
-        (********************************************************)
-        (*                                                      *)
-        (*      Definitions of non-quite-portable types         *)
-        (*                                                      *)
-        (*  Programmer:         P. Moylan                       *)
-        (*  Last edited:        21 February 1995                *)
-        (*  Status:             OK                              *)
-        (*                                                      *)
-        (*      The implementation part is deliberately empty   *)
-        (*                                                      *)
-        (********************************************************)
+        (****************************************************************)
+        (*                                                              *)
+        (*                      WFT version number                      *)
+        (*                                                              *)
+        (*    Last edited:    10 August 2016                            *)
+        (*    Status:         OK                                        *)
+        (*                                                              *)
+        (****************************************************************)
 
-END Types.
+
+END WFTV.
 

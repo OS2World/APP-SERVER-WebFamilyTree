@@ -10,7 +10,7 @@ MODULE Subset;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            19 December 2004                *)
-        (*  Last edited:        23 December 2004                *)
+        (*  Last edited:        17 February 2009                *)
         (*  Status:             Working                         *)
         (*                                                      *)
         (********************************************************)
@@ -536,7 +536,7 @@ PROCEDURE Pass1 (file: FilenameString): BOOLEAN;
         thisID: IDString;
 
     BEGIN
-        TB := OpenForReading (file);
+        TB := OpenForReading (file, TRUE);
         IF NOT TBFileOpened(TB) THEN
             WriteString ("Sorry, file ");
             WriteString (file);
@@ -641,7 +641,7 @@ PROCEDURE Pass2 (file: FilenameString);
         done, family: BOOLEAN;
 
     BEGIN
-        TB := OpenForReading (file);
+        TB := OpenForReading (file, TRUE);
         IF NOT TBFileOpened(TB) THEN
             WriteString ("Sorry, did not succeed in reopening file ");
             WriteString (file);
@@ -742,7 +742,7 @@ PROCEDURE WriteResult (file: FilenameString);
 
     BEGIN
         index := 0;
-        TB := OpenForReading (file);
+        TB := OpenForReading (file, TRUE);
         StartReading (TB, NextLevel, NextLine);
         done := FALSE;
 

@@ -7,7 +7,7 @@ MODULE Lint;
         (*                                                      *)
         (*  Programmer:         P. Moylan                       *)
         (*  Started:            28 November 2001                *)
-        (*  Last edited:        4 January 2005                  *)
+        (*  Last edited:        17 February 2009                *)
         (*  Status:                                             *)
         (*      Pass 1 and Pass 2 both OK                       *)
         (*      Loop detection now appears to be correct        *)
@@ -1015,7 +1015,7 @@ PROCEDURE Pass1 (file: FilenameString): BOOLEAN;
         code: HashCode;
 
     BEGIN
-        TB := OpenForReading (file);
+        TB := OpenForReading (file, TRUE);
         IF NOT TBFileOpened(TB) THEN
             WriteString ("Sorry, file ");
             WriteString (file);
@@ -1183,7 +1183,7 @@ PROCEDURE Pass2 (file: FilenameString);
 
     BEGIN
         WriteString ("Starting Pass 2");  WriteLn;
-        TB := OpenForReading (file);
+        TB := OpenForReading (file, TRUE);
         IF NOT TBFileOpened(TB) THEN
             WriteString ("Sorry, did not succeed in reopening file ");
             WriteString (file);
